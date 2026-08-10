@@ -17,7 +17,7 @@ app.use(helmet());
 // CORS - only allow the configured frontend origin, with credentials for cookies
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: "https://exam-prep-frontend-alpha.vercel.app" || process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   })
 );
