@@ -18,7 +18,7 @@ export const generateTokenAndSetCookie = (res, userId) => {
     secure: true,
     sameSite: "none",
     maxAge: cookieExpiresDays * 24 * 60 * 60 * 1000,
-    // path: "/",
+    path: "/",
   });
 
   return token;
@@ -28,8 +28,8 @@ export const clearTokenCookie = (res) => {
   const isProduction = process.env.NODE_ENV === "production";
   res.clearCookie("token", {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
+    secure: true,
+    sameSite: "none",
     path: "/",
   });
 };
