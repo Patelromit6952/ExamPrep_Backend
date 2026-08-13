@@ -1788,6 +1788,18 @@ export const getAttempt = asyncHandler(async (req, res) => {
     isVisited: a.isVisited
   }));
 
+  const sectionsPayload =
+    finalAttempt.isSectionTimed && sections.length
+      ? sections
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((section) => ({
+            _id: section._id,
+            title: section.title,
+            order: section.order,
+            durationMinutes: section.durationMinutes
+          }))
+      : [];
+
   res.status(200).json(
     new ApiResponse(
       200,
@@ -1815,6 +1827,7 @@ export const getAttempt = asyncHandler(async (req, res) => {
           negativeMarks: exam.negativeMarks,
           instructions: exam.instructions
         },
+        sections: sectionsPayload,
         questions: orderedQuestions,
         answers,
         serverTime: new Date()
@@ -1995,19 +2008,17 @@ export const advanceSection = asyncHandler(async (req, res) => {
   finalAttempt.currentSectionIndex = nextIndex;
   await finalAttempt.save();
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          attempt: finalAttempt,
-          finished: false,
-          nextSectionTitle: nextSection?.title
-        },
-        "Moved to next section"
-      )
-    );
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        attempt: finalAttempt,
+        finished: false,
+        nextSectionTitle: nextSection?.title
+      },
+      "Moved to next section"
+    )
+  );
 });
 
 // @desc    Submit an attempt (manual submit, with confirmation on the
