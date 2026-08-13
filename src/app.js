@@ -75,7 +75,9 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+      const allowedOrigin =
+        "https://examprep2026.netlify.app" ||
+        "http://localhost:5173";
       if (!origin || origin === allowedOrigin) {
         return callback(null, true);
       }
