@@ -5,19 +5,24 @@ const sectionSchema = new mongoose.Schema(
     examId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Exam",
-      required: true,
+      required: true
     },
     title: {
       type: String,
       required: [true, "Section title is required"],
       trim: true,
-      maxlength: [120, "Title cannot exceed 120 characters"],
+      maxlength: [120, "Title cannot exceed 120 characters"]
     },
     order: {
       type: Number,
       required: true,
-      default: 0,
+      default: 0
     },
+    durationMinutes: {
+      type: Number,
+      default: null,
+      min: [1, "Section duration must be at least 1 minute"]
+    }
   },
   { timestamps: true }
 );

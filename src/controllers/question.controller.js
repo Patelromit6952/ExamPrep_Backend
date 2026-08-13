@@ -20,7 +20,9 @@ export const getQuestions = asyncHandler(async (req, res) => {
 
   const questions = await Question.find(filter).sort({ createdAt: -1 });
 
-  res.status(200).json(new ApiResponse(200, { questions }, "Questions fetched"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, { questions }, "Questions fetched"));
 });
 
 // @desc    Create a single question manually
@@ -41,7 +43,7 @@ export const createQuestion = asyncHandler(async (req, res) => {
     marks,
     explanation,
     difficulty,
-    topic,
+    topic
   } = req.body;
 
   const question = await Question.create({
@@ -53,10 +55,12 @@ export const createQuestion = asyncHandler(async (req, res) => {
     marks,
     explanation,
     difficulty,
-    topic,
+    topic
   });
 
-  res.status(201).json(new ApiResponse(201, { question }, "Question created successfully"));
+  res
+    .status(201)
+    .json(new ApiResponse(201, { question }, "Question created successfully"));
 });
 
 // @desc    Update a question
@@ -76,7 +80,7 @@ export const updateQuestion = asyncHandler(async (req, res) => {
     "marks",
     "explanation",
     "difficulty",
-    "topic",
+    "topic"
   ];
 
   allowedFields.forEach((field) => {
@@ -87,7 +91,9 @@ export const updateQuestion = asyncHandler(async (req, res) => {
 
   await question.save();
 
-  res.status(200).json(new ApiResponse(200, { question }, "Question updated successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, { question }, "Question updated successfully"));
 });
 
 // @desc    Delete a question
@@ -101,7 +107,9 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
 
   await Question.deleteOne({ _id: question._id });
 
-  res.status(200).json(new ApiResponse(200, null, "Question deleted successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, null, "Question deleted successfully"));
 });
 
 // @desc    Bulk upload questions from a CSV file
@@ -158,7 +166,7 @@ export const bulkUploadQuestions = asyncHandler(async (req, res) => {
       {
         successCount: inserted.length,
         errorCount: rowErrors.length,
-        errors: rowErrors,
+        errors: rowErrors
       },
       `Bulk upload complete: ${inserted.length} added, ${rowErrors.length} failed`
     )

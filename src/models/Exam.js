@@ -75,7 +75,16 @@ const examSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ["SSC", "Banking", "Railway", "GPSC", "UPSC", "Other","GSSSB","GPSSB"],
+      enum: [
+        "SSC",
+        "Banking",
+        "Railway",
+        "GPSC",
+        "UPSC",
+        "Other",
+        "GSSSB",
+        "GPSSB"
+      ],
       default: "Other"
     },
     durationMinutes: {
@@ -98,6 +107,10 @@ const examSchema = new mongoose.Schema(
       default: []
     },
     isPublished: {
+      type: Boolean,
+      default: false
+    },
+    isSectionTimed: {
       type: Boolean,
       default: false
     },
