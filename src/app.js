@@ -76,7 +76,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       const allowedOrigin =
-        // "https://examprep2026.netlify.app" ||
+        "https://examprep2026.netlify.app" ||
         "http://localhost:5173";
       if (!origin || origin === allowedOrigin) {
         return callback(null, true);
