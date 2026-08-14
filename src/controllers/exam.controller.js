@@ -890,7 +890,7 @@ export const getExams = asyncHandler(async (req, res) => {
   const wantsAll = req.query.all === "true" && req.user.role === "admin";
   const filter = wantsAll ? {} : { isPublished: true };
 
-  const exams = await Exam.find(filter).sort({ createdAt: -1 }).lean();
+  const exams = await Exam.find(filter).sort({ createdAt: 1 }).lean();
 
   // Attach a live question count so list cards can show "50 questions" etc.
   const examIds = exams.map((e) => e._id);
