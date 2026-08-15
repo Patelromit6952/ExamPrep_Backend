@@ -382,6 +382,8 @@ const assignNewSession = (user) => {
 // @route   POST /api/auth/register
 // @access  Public
 export const register = asyncHandler(async (req, res) => {
+  console.time("REGISTER");
+
   const { name, email, password } = req.body;
   const normalizedEmail = email.toLowerCase();
 
@@ -425,7 +427,13 @@ export const register = asyncHandler(async (req, res) => {
     otp: { code: otp, expiresAt: getOtpExpiry(), purpose: "verify-email" }
   });
 
-  await sendOtpEmail(user.email, otp);
+sendOtpEmail(user.email, otp)
+  .then(() => {
+    console.log(`OTP sent to ${user.email}`);
+  })
+  .catch((error) => {
+    console.error("OTP email failed:", error);
+  });
 
   res
     .status(201)
