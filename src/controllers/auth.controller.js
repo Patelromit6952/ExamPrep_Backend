@@ -385,67 +385,79 @@ export const register = asyncHandler(async (req, res) => {
   console.time("REGISTER");
 
   const { name, email, password } = req.body;
-  const normalizedEmail = email.toLowerCase();
 
-  const existingUser = await User.findOne({ email: normalizedEmail });
+  const normalizedEmail = email.trim().toLowerCase();
 
+  const existingUser = await User.findOne({
+    email: normalizedEmail
+  });
+
+  // User already has a verified account
   if (existingUser && existingUser.isEmailVerified) {
     throw new ApiError(409, "An account with this email already exists");
   }
 
   const otp = generateOtp();
 
+  // Existing but unverified user
   if (existingUser) {
-    // Re-registering an unverified account: refresh details + resend OTP
-    // instead of creating a duplicate record.
     existingUser.name = name;
-    existingUser.password = password; // re-hashed by the pre-save hook
+    existingUser.password = password;
+
     existingUser.otp = {
       code: otp,
       expiresAt: getOtpExpiry(),
       purpose: "verify-email"
     };
+
     await existingUser.save();
+
     await sendOtpEmail(existingUser.email, otp);
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { email: existingUser.email },
-          "OTP sent to your email."
-        )
-      );
+
+    console.timeEnd("REGISTER");
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          email: existingUser.email
+        },
+        "OTP sent to your email."
+      )
+    );
   }
 
+  // Create new user
   const user = await User.create({
     name,
     email: normalizedEmail,
     password,
     role: "student",
-    isEmailVerified: true,
-    otp: { code: otp, expiresAt: getOtpExpiry(), purpose: "verify-email" }
+    isEmailVerified: false,
+    otp: {
+      code: otp,
+      expiresAt: getOtpExpiry(),
+      purpose: "verify-email"
+    }
   });
 
-sendOtpEmail(user.email, otp)
-  .then(() => {
-    console.log(`OTP sent to ${user.email}`);
-  })
-  .catch((error) => {
-    console.error("OTP email failed:", error);
-  });
+  // Send OTP using Resend
+  await sendOtpEmail(user.email, otp);
 
-  res
-    .status(201)
-    .json(
-      new ApiResponse(
-        201,
-        { email: user.email },
-        "Account created. OTP sent to your email."
-      )
-    );
+  console.log(`OTP sent to ${user.email}`);
+
+  console.timeEnd("REGISTER");
+
+  return res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        email: user.email
+      },
+      "Account created. OTP sent to your email."
+    )
+  );
 });
-
 // @desc    Verify the OTP sent at registration. Logs the user in immediately
 //          afterwards, unless another session is already active elsewhere.
 // @route   POST /api/auth/verify-otp
