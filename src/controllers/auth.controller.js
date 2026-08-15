@@ -423,7 +423,7 @@ export const register = asyncHandler(async (req, res) => {
     email: normalizedEmail,
     password,
     role: "student",
-    isEmailVerified: false,
+    isEmailVerified: true,
     otp: { code: otp, expiresAt: getOtpExpiry(), purpose: "verify-email" }
   });
 
